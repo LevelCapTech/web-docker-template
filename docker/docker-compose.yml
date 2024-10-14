@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: ./docker/prod/Dockerfile  # 本番用のDockerfileへのパスを変更
+    image: <TODO:application_name>:latest
+    env_file:
+      - ../../.env
+    environment:
+      - DEBUG_MODE=false
+    volumes:
+      - <TODO:log_dir>/<TODO:application_code>:/<TODO:application_code>/data/log
+    networks:
+      - <TODO:network_name>
+  db:
+    image: mysql:8.0
+    container_name: piwigo_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: <TODO:application_code>_pass
+      MYSQL_DATABASE: <TODO:application_code>_db
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - <TODO:network_name>
+
+# ネットワーク定義
+networks:
+  <TODO:network_name>:

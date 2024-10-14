@@ -4,9 +4,6 @@ FROM python:3
 # OSのパッケージリストを更新
 RUN apt-get update
 
-# pipをアップデート
-RUN pip install --upgrade pip
-
 # タイムゾーンをAsia/Tokyoに設定
 RUN apt-get install -y tzdata && \
     ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
