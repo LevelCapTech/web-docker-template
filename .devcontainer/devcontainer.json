@@ -1,6 +1,6 @@
 {
   "name": "PHP + Apache Dev Container",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": "./docker-compose.yml",
   "service": "php-apache",
   "workspaceFolder": "/app",
   "customizations": {
