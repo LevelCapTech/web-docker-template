@@ -4,29 +4,51 @@ services:
   app:
     build:
       context: ../../
-      dockerfile: ./docker/prod/Dockerfile  # 本番用のDockerfileへのパスを変更
-    image: <TODO:application_name>:latest
+      dockerfile: ./docker/prod/Dockerfile  # 本番用のDockerfileへのパス
+    image: my_application:latest  # アプリケーション名を設定
     env_file:
       - ../../.env
     environment:
-      - DEBUG_MODE=false
+      - DEBUG_MODE=false  # デバッグモードを無効化
     volumes:
-      - <TODO:log_dir>/<TODO:application_code>:/<TODO:application_code>/data/log
+      - /var/log/my_application:/my_application/data/log  # ログディレクトリのマウント設定
     networks:
-      - <TODO:network_name>
+      - my_network  # ネットワーク名を設定
+
   db:
     image: mysql:8.0
     container_name: piwigo_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: <TODO:application_code>_pass
-      MYSQL_DATABASE: <TODO:application_code>_db
-      MYSQL_USER: db_user
-      MYSQL_PASSWORD: db_pass
+      MYSQL_ROOT_PASSWORD: my_application_pass  # MySQLのrootパスワードを設定
+      MYSQL_DATABASE: my_application_db  # MySQLのデータベース名を設定
+      MYSQL_USER: db_user  # MySQLのユーザー名を設定
+      MYSQL_PASSWORD: db_pass  # MySQLのパスワードを設定
+      MYSQL_ROOT_HOST: "%"  # rootユーザーのホストを全て許可
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql  # MySQLのデータボリューム
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --lc-messages=ja_JP  # 文字セットと日本語メッセージ
     networks:
-      - <TODO:network_name>
+      - my_network  # ネットワーク名を設定
+
+  mysqladmin:
+    image: mysql:8.0
+    container_name: piwigo_mysqladmin
+    depends_on:
+      - db  # MySQLコンテナが起動してから実行される
+    environment:
+      MYSQL_ROOT_PASSWORD: my_application_pass  # MySQLのrootパスワード
+      MYSQL_DATABASE: my_application_db  # データベース名
+      MYSQL_USER: db_user  # ユーザー名
+      MYSQL_PASSWORD: db_pass  # パスワード
+    entrypoint: >
+      sh -c 'mysqladmin --host=db --user=root --password=$$MYSQL_ROOT_PASSWORD status'
+    networks:
+      - my_network  # ネットワーク名を設定
+
+volumes:
+  db_data:  # データ永続化のためのボリューム
 
 # ネットワーク定義
 networks:
-  <TODO:network_name>:
+  my_network:  # ネットワーク名の設定
+  
