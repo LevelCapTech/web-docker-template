@@ -4,9 +4,8 @@ FROM php:8.2-apache
 # OSのパッケージリストを更新
 RUN apt-get update
 
-# Apache の設定を調整
-RUN a2enmod rewrite && \
-    sed -i 's!/var/www/html!/app/public_html!g' /etc/apache2/sites-available/000-default.conf
+# ローカルから Apache の設定ファイルをコピー
+COPY .devcontainer/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # ロケールの設定 (ja_JP.UTF-8)
 RUN apt-get update && apt-get -y install locales && \
